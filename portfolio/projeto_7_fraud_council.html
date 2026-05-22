@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFL Big Play Metrics | Portfólio</title>
+    
+    <!-- Pico CSS via CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    
+    <!-- JetBrains Mono Font -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body class="dark-theme">  
+    <!-- HEADER -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <a href="../index.html" class="logo-main">Leandro Freire</a>
+                <span class="logo-sub">data_scientist</span>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="../index.html">home</a></li>
+                    <li><a href="../portfolio.html">portfólio</a></li>
+                    <li>
+                        <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema claro/escuro">
+                            <span id="theme-icon">🌙</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- MAIN CONTENT -->
+    <main id="main-content">
+        <div class="container">
+            <!-- Card gigante do post -->
+            <article class="big-card">
+                <!-- Cabeçalho do card -->
+                <div class="card-header">
+                    <h1 class="card-title">Conselho de modelos de detecção de fraude</h1>
+                    <p class="card-subtitle">Criei um meta-modelo de detecção de fraude em transações de cartão crédito que usa 3 especialistas</p>
+                </div>
+                
+                <!-- Conteúdo do card -->
+                <div class="card-content">
+                    <p class="card-text"><a href="https://github.com/leandrofreiredealmeida/fraud_council">GitHub Link</a></p>
+                    <p class="card-text"><a href="https://leandrofraudcouncil.streamlit.app/">Streamlit App</a></p>
+                    <div class="card-image">
+                        <img src="../images/fraud_council_1.png" alt="Comparação das métricas dos 3 modelos">
+                        <div class="image-caption">Comparação das métricas dos 3 modelos utilizados</div>
+                    </div>
+                    
+                    <p class="card-text">Este é um projeto de detecção de fraude de transação de cartão de crédito que utiliza um conselho de modelos de ML para chegar ao veredito. O conjunto de dados foi obtido a partir do famoso <a href="https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud">Credit Card Fraud Detection</a>. A ideia inicial era utilizar Isolation Forest como um quarto especialista, mas por causa do recall de apenas 47%, mesmo após o finetune, decidi manter apenas 3 especialistas.</p>
+                    <p class="card-text">A principal nova tarefa que aprendi neste projeto foi a criação de um meta-modelo utilizando o score dos 3 modelos especialistas (Random Forest, XGBoost e Autoencoder), criando assim um detector de fraude mais poderoso. Para isso, esse meta-modelo foi treinado usando regressão logística (eu não poderia fazer algo mais pesado porque queria disponibilizar o projeto via Streamlit). Assim, o meta-modelo indica a probabilidade de fraude que vai de [0, 1].</p>
+                    <div class="card-image">
+                        <img src="../images/fraud_council_2.png" alt="imagem do conselho de especialistas">
+                        <div class="image-caption">Conselho de especialistas</div>
+                    </div>
+                    <p class="card-text">No deploy decidi deixar disponível a verificação de fraude a partir de dois meios: a transação do dataset (que possui os dados do dataset original) e a transação manual (que permite ao usuário criar uma nova transação). Obviamente seria mais interessante que as features tivessem "labels", mas o dataset original não tem essas labels por questões éticas.</p>
+                    <div class="card-image">
+                        <img src="../images/fraud_council_3.png" alt="imagem da aba de explicabilidade - análise SHAP">
+                        <div class="image-caption">Análise SHAP</div>
+                    </div>
+                    <p class="card-text">Por fim, na última aba coloquei a explicabilidade dos modelos usando SHAP (SHapley Additive exPlanations), que é um método usa para explicar a saída de modelos de ML calculando quais features são mais significativas. Acredito que também foi a primeira vez que trabalho com este método e agora estou pensando em criar um novo projeto que utilize features não anonimizadas para aprender mais sobre essa técnica.</p>
+                </div>
+                
+                <!-- Rodapé do card -->
+                <div class="card-footer">
+                    <a href="../portfolio.html" class="back-link">← Voltar para o portfólio</a>
+                </div>
+            </article>
+        </div>
+    </main>
+    
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-inner">
+                <div class="social-links">
+                    <a href="https://bsky.app/profile/pdfreire.bsky.social" class="social-link" aria-label="Bluesky"><i class="fa-solid fa-cloud"></i></a>
+                    <a href="https://www.linkedin.com/in/leandro-freire-de-almeida-24893349/" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/leandrofreiredealmeida" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="mailto:lefreirealmeida@gmail.com" class="social-link" aria-label="E-mail"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+                <p class="copyright">
+                    &copy; <span id="current-year">2026</span> Leandro Freire. Todos os direitos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Nosso JavaScript -->
+    <script src="../script.js"></script>
+</body>
+</html>
