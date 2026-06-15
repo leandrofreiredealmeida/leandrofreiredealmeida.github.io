@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sítios da UNESCO | Portfólio</title>
+    
+    <!-- Pico CSS via CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    
+    <!-- JetBrains Mono Font -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body class="dark-theme">  
+    <!-- HEADER -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <a href="../index.html" class="logo-main">Leandro Freire</a>
+                <span class="logo-sub">data_scientist</span>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="../index.html">home</a></li>
+                    <li><a href="../portfolio.html">portfólio</a></li>
+                    <li>
+                        <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema claro/escuro">
+                            <span id="theme-icon">🌙</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- MAIN CONTENT -->
+    <main id="main-content">
+        <div class="container">
+            <!-- Card gigante do post -->
+            <article class="big-card">
+                <!-- Cabeçalho do card -->
+                <div class="card-header">
+                    <h1 class="card-title">Análise e modelagem dos Sítios do Patrimônio Mundial da UNESCO</h1>
+                    <p class="card-subtitle">Criei um dashboard com os sítios clusterizados, onde o usuário pode identificar sítios semelhantes por proximidade geográfica ou temática</p>
+                </div>
+                
+                <!-- Conteúdo do card -->
+                <div class="card-content">
+                    <p class="card-text"><a href="https://github.com/leandrofreiredealmeida/unesco_sites">GitHub Link</a></p>
+                    <p class="card-text"><a href="https://unescosites.streamlit.app/">Streamlit App</a></p>
+                    <div class="card-image">
+                        <img src="../images/unesco_sites_1.png" alt="Mapa-múndi dos sítios do Patrimônio Mundial da UNESCO">
+                        <div class="image-caption">Mapa-múndi dos sítios do Patrimônio Mundial da UNESCO</div>
+                    </div>
+                    
+                    <p class="card-text">O projeto nasceu de uma curiosidade simples: o que os 1.248 sítios inscritos na Lista do Patrimônio Mundial da UNESCO têm em comum entre si? O dataset cobre 54 colunas, desde coordenadas geográficas e ano de inscrição até descrições textuais em múltiplos idiomas e os critérios de valor universal excepcional que justificaram cada inscrição. A primeira etapa foi uma análise exploratória que resultou na remoção de 20 colunas multilíngues redundantes e outras colunas não úteis para o objetivo, bem como na engenharia de features derivadas: granularidade temporal a partir de <code>date_inscribed</code>, contagem de critérios culturais e naturais por parse de string, coordenadas numéricas extraídas de um campo de texto composto e um campo <code>full_text</code> consolidando as descrições em inglês para uso no pipeline de NLP.</p>
+                    <p class="card-text">A segunda fase introduziu similaridade semântica entre sítios via vetorização TF-IDF. O <code>TfidfVectorizer</code> foi configurado com <code>ngram_range=(1, 2)</code>, <code>sublinear_tf=True</code>, <code>max_features=8.000</code> e <code>min_df=2</code>, produzindo uma matriz esparsa de 1.247 × 8.000 termos. A similaridade entre pares de sítios foi calculada via <code>linear_kernel</code> (equivalente ao cosseno, porém mais eficiente para matrizes esparsas) e a similaridade entre regiões foi obtida pelo vetor TF-IDF médio por região seguido de <code>cosine_similarity</code>, exposta em um heatmap.</p>
+                    <div class="card-image">
+                        <img src="../images/unesco_sites_2.png" alt="Dispersão geográfica dos sítios UNESCO">
+                        <div class="image-caption">Dispersão geográfica dos sítios UNESCO mostrando a concentração europeia</div>
+                    </div>
+                    <div class="card-image">
+                        <img src="../images/unesco_sites_3.png" alt="Sítios UNESCO em perigo">
+                        <div class="image-caption">Uma das análises sobre os sítios UNESCO em perigo</div>
+                    </div>
+                    <p class="card-text">O clustering geográfico foi conduzido com DBSCAN após o descarte do KMeans, que produziu sistematicamente apenas k=2 classes — o <i>silhouette score</i> favorecia divisão binária sobre latitude/longitude, sem valor interpretativo. A implementação com KMeans descartada, o DBSCAN foi configurado com <code>metric="haversine"</code> e <code>algorithm="ball_tree"</code>, exigindo que as coordenadas fossem convertidas para radianos antes do ajuste. O valor de <code>eps</code> (0,05 rad ≈ 318 km) foi selecionado pelo método do cotovelo aplicado ao gráfico k-distâncias com k=5, evitando o problema da versão inicial em que um <code>eps</code> estimado automaticamente pela segunda derivada era demasiado alto para dados geograficamente dispersos, colapsando todos os pontos em um único cluster. Variantes multivariada e temática via NLP foram avaliadas e descartadas por não produzirem estrutura interpretável.</p>
+                    <div class="card-image">
+                        <img src="../images/unesco_sites_4.png" alt="Recomendação de sítios UNESCO semelhantes">
+                        <div class="image-caption">Recomendação de sítios UNESCO semelhantes</div>
+                    </div>
+                    <p class="card-text">A classificação temática representou a etapa de maior valor analítico do projeto. Observei que as três categorias nativas da UNESCO (Cultural, Natural e Mixed) são insuficientes para capturar a diversidade tipológica dos sítios; um complexo de ruínas mesopotâmicas e um centro histórico habitado pertencem ambos à categoria "Cultural", mas são experiências radicalmente distintas. A solução adotada foi <i>prototype matching</i>: 12 categorias temáticas foram definidas (Ruins & Archaeological Sites, Living Urban Centres, Religious & Sacred Ensembles, entre outras), cada uma representada por um parágrafo-protótipo em inglês. Esses protótipos foram transformados pelo mesmo <code>TfidfVectorizer</code> já ajustado na fase anterior, produzindo uma matriz de similaridade cosseno de dimensão 1.247 × 12. A categoria primária de cada sítio é o <code>argmax</code> da linha; atribuições multi-label usam limiar de 0.05, permitindo capturar sítios com perfil híbrido.</p>
+                    <p class="card-text">O produto final é um dashboard interativo construído com Streamlit e Plotly Express. O mapa <code>scatter_map</code> com <code>mapbox_style="open-street-map"</code> exibe os 1.247 sítios coloridos pelas 12 categorias temáticas. A seleção de um marcador via <code>on_select="rerun"</code> persiste no <code>st.session_state</code> e renderiza um painel lateral com o card do sítio e uma lista de 10 recomendações cujo score combina proximidade geográfica (haversine invertido e normalizado) e similaridade NLP (TF-IDF cosseno normalizado) via <code>score = geo_weight × geo_score + (1 − geo_weight) × nlp_norm</code>, com <code>geo_weight</code> ajustável por slider em tempo real.</p>
+                    <p class="card-text">O projeto foi estruturado como um pacote Python instalável em <code>src/unesco_sites/</code>, com separação clara entre carregamento de dados (<code>loader.py</code>), modelagem (<code>similarity.py</code>, <code>recommender.py</code>) e orquestração (<code>pipeline.py</code>), este último retornando um <code>PipelineState</code> tipado que o dashboard consome via <code>@st.cache_resource</code>.</p>
+                </div>
+                
+                <!-- Rodapé do card -->
+                <div class="card-footer">
+                    <a href="../portfolio.html" class="back-link">← Voltar para o portfólio</a>
+                </div>
+            </article>
+        </div>
+    </main>
+    
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-inner">
+                <div class="social-links">
+                    <a href="https://bsky.app/profile/pdfreire.bsky.social" class="social-link" aria-label="Bluesky"><i class="fa-solid fa-cloud"></i></a>
+                    <a href="https://www.linkedin.com/in/leandro-freire-de-almeida-24893349/" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/leandrofreiredealmeida" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="mailto:lefreirealmeida@gmail.com" class="social-link" aria-label="E-mail"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+                <p class="copyright">
+                    &copy; <span id="current-year">2026</span> Leandro Freire. Todos os direitos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Nosso JavaScript -->
+    <script src="../script.js"></script>
+</body>
+</html>
